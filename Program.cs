@@ -7,13 +7,16 @@
 // returns the result over the same connection.
 //
 // The kernel addresses and structure field offsets come from the firmware-versioned tables in
-// SharpProspero.Payload.Kernel.KernelOffsets and are selected at run time from the value
-// GetSystemSoftwareVersion returns. Every kernel access routes through the CRT-emitted accessors,
-// which share a single pipe-primitive call chain initialized once during CRT startup from the
-// loader's payload_args block. The root vnode is discovered at run time (walking the process list
-// to init and reading its file-descriptor table's root directory) when the running firmware has
-// no verified rootvnode offset on file, so the daemon carries every firmware whose allproc and
-// kernel_pmap_store are recognized by KernelOffsets.IsSupportedForUnjail.
+// SharpProspero.Payload.Kernel.KernelOffsets (per-firmware switches for the small subset the
+// daemon consults unconditionally) and SharpProspero.Payload.Kernel.KernelOffsetTables (the full
+// 78-symbol table per firmware for callers that need any other symbol). Both are selected at run
+// time from the value GetSystemSoftwareVersion returns. Every kernel access routes through the
+// CRT-emitted accessors, which share a single pipe-primitive call chain initialized once during
+// CRT startup from the loader's payload_args block. The root vnode is discovered at run time
+// (walking the process list to init and reading its file-descriptor table's root directory) when
+// the running firmware has no verified rootvnode offset on file, so the daemon carries every
+// firmware whose allproc and kernel_pmap_store are recognized by KernelOffsets.IsSupportedForUnjail,
+// which today spans 1.00 through 13.60 across every family in the offset table.
 
 using System;
 using System.Runtime.InteropServices;
